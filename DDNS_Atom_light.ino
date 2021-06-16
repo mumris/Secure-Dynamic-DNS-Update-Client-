@@ -1,72 +1,20 @@
-/*
-This software version is tested on M5 Timer Camera X  and provided "as is" by Saulius Pakalnis (Mumris).
-
-Introduction
-When you sign up with an Internet Service Provider, you will end up either with a static IP address or a dynamic IP address. What is the difference between the two?
-Dynamic means “constantly changing.” The prefix dyna means power; however, dynamic IP addresses are “not more powerful”, but internet provider can change them without any notice.
-Static means staying the same. Static. Stand. Stable. Yes, static IP addresses do not change.
-For a home user there is no difference between the two plans until one do not need access to home devices or home computer from internet. However, if you have IP camera or other Internet of Things (IoT) device and want to control them from Internet, the situation becomes different.
-For most home internet users a Static IP address is too expensive.  You can still use dynamic IP address but some system must track it changes. Then DDNS, which can be free, can be very helpful. For an example: http://www.duckdns.org/.
-Dynamic domain name service (DDNS) enables you remotely access your computer, control remote IP cameras and other Internet of Things devices on your home or small business broadband connection even when connected to the internet via a dynamic IP address. Some public organizations or companies provide this service free on their web sites. 
-Ok, but how the DDNS knows when your dynamic IP address is changed by Internet provider and how it upgrades it from your home? The answer: you need to install IP address update client.
-So what is an DDNS Update Client?
-An update client is a computer application or a feature in your router that keeps your hostname’s IP address up-to-date. The update client periodically checks your network’s IP address and, if it sees that your IP address has changed, it sends (updates) the new IP address to your hostname in your DDNS account.
-I have programmed and installed DDNS Client into cheap and small ESP32 based device.  It uses WIFI for internet and USB for +5V power. Ref.: https://shop.m5stack.com/collections/m5-atom/products/atom-lite-esp32-development-kit
-
-How it works?
-Every 4 hours it obtains your home Public IP address from some Internet server using Get my IP address request. You can program 3 servers, or use default ones. For an example:  https://ip.seeip.org/
-Note: The software uses https requests (SSL TCP/IP) to obtain Public IP address and send it to DDNS. Public IP address Servers with non-secure http: request are not supported.
-If it detect your home IP address change, it updates your DDNS hostname to resolve to your remote IP address.
-Then the device disconnects from WIFI and sleeps with a very low power consumption for 4 hours.  Then it awakes, connects to WIFI, and checks Public IP address, sends it to DDNS if Internet provider in case of changes and goes to sleep again for 4 hours.
-M5 Stack ATOM Lite programming and Installation with Arduino IDE (https://www.arduino.cc/).
-Download and install ESP32 zip package from https://github.com/espressif/arduino-esp32/
-Install ESP32 zip package from: Menu->Sketch->include Library->Add Zip Library
-
-From Menu->Tools->Manage Libraries -> Download: ESP32 Lite Pack Library, ESP_HTTPS_Server, Adafruit_NeoPixel, and others if missing.
-
-Arduino IDE setup->File->Preferences->Additional Boards Manager URLs:
-https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/arduino/package_m5stack_index.json
-https://dl.espressif.com/dl/package_esp32_index.json
-
-Arduino IDE setup->Board:"M5Stack-ATOM", Partition scheme “No OTA”
-Compile the sources files with Arduino IDE (https://www.arduino.cc/).
-
-How to program WIFI name, WIFI password, and other parameters for M5 Stack ATOM Lite device/
-
-Connect “M5Stack ATOM Lite” to computer USB. USB to COM port settings, standard, just select: 115200 bits/second.  Follow the terminal hints.
-WIFI name, password, DDNS name https command and three public IP addresses can be set or modified through Serial port connection during first run time (30 seconds timeout). They becomes default (saved in Nonvolatile memory). For serial port programming, I recommend free software Termite.exe (https://termite.software.informer.com/3.2/).
-Then you must to set GET request string to DDNS. If you get a token, the request looks like browser command line:
-“https://www.duckdns.org/update?domains=PUT_YOUR_NAME&token=e2403930-f58a-4237-a162-16f28444d8e3").  You can insert 'MY_PUBLIC_IP_ADDR' substring in https request. Then tee substring is replaced with your router real public IP address.
-The request format is universal and lets you to send any https command to any DDNS server.
-
-*/
-
-
+//This software version is tested on M5Stack Atom Light and provided "as is" by Saulius Pakalnis (Mumris).
 #include "sdkconfig.h"
 #include "esp_system.h"
 #include "Adafruit_NeoPixel.h"
 #define RGBLEDPIN 27
 
 #define uS_TO_S_FACTOR 1000000ULL  /* Conversion factor for micro seconds to seconds */
-
 #define TIME_TO_SLEEP  60*60*4 //less 4 hours period
-
-
 #include <WiFiClientSecure.h>
 //#include <WiFiClient.h>
-///////////////
-
 //Flash memeory of ESP32 Programming
 
 #include <EEPROM.h>
-
 #define EEPROM_SIZE 1000 // this is maximum size
-
 #define MAXCOUNT 100
-
 #define NUMBEROFFATTEMPTS 10
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(1, RGBLEDPIN, NEO_GRB + NEO_KHZ800); 
-
 struct  MyObject
 {
   char a[256];
@@ -77,7 +25,6 @@ char Public_IP_address[1000];
 
 RTC_DATA_ATTR long unsigned int bootCount = 0;
 //const char*  server = "www.duckdns.org";  // for an example DDNS Server URL
-
 //Some of Public IP (plain text) servers requests:
 //  https://ipecho.net/plain
 //  https://icanhazip.com/ 
@@ -92,7 +39,6 @@ RTC_DATA_ATTR long unsigned int bootCount = 0;
 //const char* test_client_cert = "";  //to verify the client
 ////////////////////////////////////////////////////////////
 const char* test_root_ca= NULL; //we (as client) do not care about sertificate of DDNS.
-
 WiFiClientSecure client;
 MyObject aaa, bbb, ccc, ddd, eee, fff, serv1, serv2, serv3;
 char Public_IP_serverName[256];
@@ -122,9 +68,6 @@ void setup()
   
   EEPROM_setup();  
   show_EEPROM_setup();
- //} 
- //else Serial.println("Blogas numerelis");
- 
   if (Connect_to_WIFI(bbb.a, ccc.a)) // if 1 it is connected t o WIFI, if 0 - FAiled to connect to WIFI
   {     
     /////////////WIFI CONNECTED////////////////              
@@ -231,7 +174,7 @@ void setup()
     pixels.show(); 
  }
  
-/////Anyway go to sleep for 6 hours//////////////////////////
+/////Anyway go to sleep for 4 hours//////////////////////////
 
   Serial.println("Boot number: " + String(bootCount));
   delay(1000);
