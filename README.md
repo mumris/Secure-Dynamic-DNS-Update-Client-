@@ -1,4 +1,4 @@
-# Secure-Dynamic-DNS-Update-Client-
+# Secure-Dynamic-DNS-Update-Client
 Secure Dynamic DNS Update Client based on M5 Stack ATOM Lite (ESP32 microcontroller) 
 Introduction
 When you sign up with an Internet Service Provider, you will end up either with a static IP address or a dynamic IP address. What is the difference between the two? Dynamic means “constantly changing.” The prefix dyna means power; however, dynamic IP addresses are “not more powerful”, but internet provider can change them without any notice. Static means staying the same. Static. Stand. Stable. Yes, static IP addresses do not change.
