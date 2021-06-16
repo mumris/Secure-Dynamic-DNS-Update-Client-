@@ -33,6 +33,7 @@ Connect “M5Stack ATOM Lite” to computer USB. USB to COM port settings, stand
 WIFI name, password, DDNS name https command and three public IP addresses can be set or modified through Serial port connection during first run time (30 seconds timeout). They becomes default (saved in Nonvolatile memory). For serial port programming, I recommend free software Termite.exe (https://termite.software.informer.com/3.2/).
 Then you must to set GET request string to DDNS. If you get a token, the request looks like browser command line, as an example:
 “https://www.duckdns.org/update?domains=PUT_YOUR_NAME&token=e2403930-f58a-4237-a162-16f28444d8f7").  You can insert 'MY_PUBLIC_IP_ADDR' substring in https request. Then the substring automatically is replaced with your router real public IP address: xx:xx:xx:xx.
-The request format is universal and lets you to send any https command to any DDNS server.
+The request format is universal and lets you to send any https command to any DDNS server. For operation it requires just WIFI connection to router and simple USB power adapter.
+Note: just keep M5 Stack ATOM Lite device close to your home router, as it internal integrated WIFI antenna is not powerfull.  
 
 Do not forget to set ports forwarding of your home router for  IoT controllers or/and cameras which you would like to control over Internet. See my example for M5Stack-Timer-Camera X: https://github.com/mumris/M5Stack-Timer-Camera-X/tree/master/examples/M5%20Web_cam_timer%20X
